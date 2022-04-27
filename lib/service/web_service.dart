@@ -1,3 +1,4 @@
+import 'package:cats_project/utils/debugging_util.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
@@ -22,9 +23,7 @@ class WebService {
   Future<List<Cat>> getCatFact() async {
     try {
       final response = await _dio.get('https://cat-fact.herokuapp.com/facts/random');
-      if (kDebugMode) {
-        print(response.data);
-      }
+      dPrint(response.data, 'getCatsFact');
       return catFromJson(response.data);
     } on DioError catch (e) {
       if (kDebugMode) {
