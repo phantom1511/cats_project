@@ -29,7 +29,7 @@ class _CatMainPageState extends State<CatMainPage> {
           child: Column(
             children: [
               const SizedBox(height: 16),
-              FutureBuilder<List<Cat>>(
+              FutureBuilder<Cat>(
                 future: WebService().getCatFact(),
                 builder: (context, snapshot) {
                   if (kDebugMode) {
@@ -38,28 +38,18 @@ class _CatMainPageState extends State<CatMainPage> {
                   }
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasData &&
-                      snapshot.data!.isNotEmpty &&
-                      snapshot.connectionState == ConnectionState.done) {
+                  } else if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
                     try {
-                      return ListView.separated(
-                        itemBuilder: (BuildContext context, int index) {
-                          final item = snapshot.data![index];
-                          Hive.box(HiveBoxes.fact).add(item.text);
-                          dPrint(item, 'cats item');
-                          return Column(
-                            children: [
-                              Text(
-                                item.text,
-                                style: const TextStyle(color: Colors.green),
-                              ),
-                            ],
-                          );
-                        },
-                        separatorBuilder: (BuildContext context, int index) {
-                          return const SizedBox(height: 8);
-                        },
-                        itemCount: snapshot.data?.length ?? 0,
+                      final item = snapshot.data;
+                      Hive.box(HiveBoxes.fact).add(item);
+
+                      return Column(
+                        children: [
+                          Text(
+                            item?.text ?? '',
+                            style: const TextStyle(color: Colors.green),
+                          ),
+                        ],
                       );
                     } on Exception catch (e) {
                       dPrint(e, 'Error');
@@ -70,8 +60,7 @@ class _CatMainPageState extends State<CatMainPage> {
                   } else {
                     const Text('Something went wrong');
                   }
-                  return const Center(
-                      child: CircularProgressIndicator.adaptive());
+                  return const Center(child: CircularProgressIndicator.adaptive());
                 },
               ),
               const SizedBox(height: 16),

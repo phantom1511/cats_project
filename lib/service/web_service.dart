@@ -20,11 +20,14 @@ class WebService {
     _dio = dio;
   }
 
-  Future<List<Cat>> getCatFact() async {
+  Future<Cat> getCatFact() async {
     try {
       final response = await _dio.get('https://cat-fact.herokuapp.com/facts/random');
-      dPrint(response.data, 'getCatsFact');
-      return catFromJson(response.data);
+      if (kDebugMode) {
+        print('response.data');
+        print(response.data);
+      }
+      return Cat.fromJson(response.data);
     } on DioError catch (e) {
       if (kDebugMode) {
         print(e);
