@@ -32,28 +32,30 @@ class _FactHistoryState extends State<FactHistory> {
           appBar: AppBar(
             title: const Text('Fact history'),
           ),
-          body: Column(
-            children: [
-              ListView.separated(
-                itemBuilder: (BuildContext context, int index) {
-                  final item = getFact.data![index];
-                  Hive.box(HiveBoxes.fact).add(item.text);
-                  dPrint(item, 'cats item');
-                  return Column(
-                    children: [
-                      Text(
-                        item.text ?? '',
-                        style: const TextStyle(color: Colors.green),
-                      ),
-                    ],
-                  );
-                },
-                separatorBuilder: (BuildContext context, int index) {
-                  return const SizedBox(height: 8);
-                },
-                itemCount: getFact ?? 0,
-              )
-            ],
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                ListView.separated(
+                  itemBuilder: (BuildContext context, int index) {
+                    final item = getFact.data![index];
+                    Hive.box(HiveBoxes.fact).add(item.text);
+                    dPrint(item, 'cats item');
+                    return Column(
+                      children: [
+                        Text(
+                          item.text ?? '',
+                          style: const TextStyle(color: Colors.green),
+                        ),
+                      ],
+                    );
+                  },
+                  separatorBuilder: (BuildContext context, int index) {
+                    return const SizedBox(height: 8);
+                  },
+                  itemCount: getFact ?? 0,
+                )
+              ],
+            ),
           ),
         );
       },
