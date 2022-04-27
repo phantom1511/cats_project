@@ -36,6 +36,7 @@ class _FactHistoryState extends State<FactHistory> {
             child: Column(
               children: [
                 ListView.separated(
+                  shrinkWrap: true,
                   itemBuilder: (BuildContext context, int index) {
                     final item = getFact.data![index];
                     Hive.box(HiveBoxes.fact).add(item.text);
