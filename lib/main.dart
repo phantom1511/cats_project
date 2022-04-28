@@ -14,12 +14,14 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
+import 'model/cats.g.dart';
 import 'service/web_service.dart';
 import 'view/cat_main_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
+  Hive.registerAdapter(CatAdapter());
   await Hive.openBox<dynamic>(HiveBoxes.fact);
   runApp(const MyApp());
 

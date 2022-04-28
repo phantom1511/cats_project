@@ -39,12 +39,13 @@ class _FactHistoryState extends State<FactHistory> {
                   shrinkWrap: true,
                   itemBuilder: (BuildContext context, int index) {
                     final item = getFact.data![index];
-                    Hive.box(HiveBoxes.fact).add(item.text);
+                    dPrint(item, 'hive item: ');
+                    Hive.box(HiveBoxes.fact).get(item.text);
                     dPrint(item, 'cats item');
                     return Column(
                       children: [
                         Text(
-                          item.text ?? '',
+                          Hive.box(HiveBoxes.fact).getAt(item.text),
                           style: const TextStyle(color: Colors.green),
                         ),
                       ],

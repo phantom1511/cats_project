@@ -6,11 +6,13 @@ import 'dart:convert';
 
 import 'package:hive/hive.dart';
 
-List<Cat> catFromJson(dynamic str) => List<Cat>.from((str).map((x) => Cat.fromJson(
-  Map<String, dynamic>.from(x),
-)));
+List<Cat> catFromJson(dynamic str) =>
+    List<Cat>.from((str).map((x) => Cat.fromJson(
+          Map<String, dynamic>.from(x),
+        )));
 
-String catToJson(List<Cat> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String catToJson(List<Cat> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 @HiveType(typeId: 0)
 class Cat extends HiveObject {
@@ -28,7 +30,7 @@ class Cat extends HiveObject {
   final String text;
   final DateTime updatedAt;
   final bool deleted;
-  final String source;
+  final dynamic source;
 
   Cat copyWith({
     String? id,
@@ -49,20 +51,20 @@ class Cat extends HiveObject {
       );
 
   factory Cat.fromJson(Map<String, dynamic> json) => Cat(
-    id: json["_id"],
-    v: json["__v"],
-    text: json["text"],
-    updatedAt: DateTime.parse(json["updatedAt"]),
-    deleted: json["deleted"],
-    source: json["source"],
-  );
+        id: json["_id"],
+        v: json["__v"],
+        text: json["text"],
+        updatedAt: DateTime.parse(json["updatedAt"]),
+        deleted: json["deleted"],
+        source: json["source"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "_id": id,
-    "__v": v,
-    "text": text,
-    "updatedAt": updatedAt,
-    "deleted": deleted,
-    "source": source,
-  };
+        "_id": id,
+        "__v": v,
+        "text": text,
+        "updatedAt": updatedAt,
+        "deleted": deleted,
+        "source": source,
+      };
 }

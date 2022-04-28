@@ -16,6 +16,19 @@ class CatMainPage extends StatefulWidget {
 }
 
 class _CatMainPageState extends State<CatMainPage> {
+  final webService = WebService();
+  final String catPhoto = 'https://cataas.com/cat';
+
+  void _anotherFact() {
+    setState(() {
+      webService.getCatFact();
+      webService.getCatImage();
+      Hive.box(HiveBoxes.fact)
+          .put(HiveBoxes.fact, webService.getCatFact());
+      catPhoto;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,18 +43,20 @@ class _CatMainPageState extends State<CatMainPage> {
             children: [
               const SizedBox(height: 16),
               FutureBuilder<Cat>(
-                future: WebService().getCatFact(),
+                future: webService.getCatFact(),
                 builder: (context, snapshot) {
+                  Hive.openBox<dynamic>(HiveBoxes.fact);
                   if (kDebugMode) {
                     print('snapshot.error');
                     print(snapshot.error);
                   }
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
+                  } else if (snapshot.hasData &&
+                      snapshot.connectionState == ConnectionState.done) {
                     try {
                       final item = snapshot.data;
-                      Hive.box(HiveBoxes.fact).add(item);
+                      Hive.box(HiveBoxes.fact).put(HiveBoxes.fact, item);
 
                       return Column(
                         children: [
@@ -60,28 +75,33 @@ class _CatMainPageState extends State<CatMainPage> {
                   } else {
                     const Text('Something went wrong');
                   }
-                  return const Center(child: CircularProgressIndicator.adaptive());
+                  return const Center(
+                      child: CircularProgressIndicator.adaptive());
                 },
               ),
               const SizedBox(height: 16),
-              Image.network('https://cataas.com/cat', loadingBuilder:
-                  ((BuildContext context, Widget child,
-                      ImageChunkEvent? loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Center(
-                    child: CircularProgressIndicator(
-                  value: loadingProgress.expectedTotalBytes != null
-                      ? loadingProgress.cumulativeBytesLoaded /
-                          loadingProgress.expectedTotalBytes!
-                      : null,
-                ));
-              })),
+              FutureBuilder(
+                  future: webService.getCatImage(),
+                  builder: (context, snapshot) {
+                    return Image.network(catPhoto,
+                        loadingBuilder: ((BuildContext context, Widget child,
+                            ImageChunkEvent? loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(
+                          child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                            : null,
+                      ));
+                    }));
+                  }),
               const SizedBox(height: 16),
               SizedBox(
                 width: double.maxFinite,
                 child: ElevatedButton(
-                    onPressed: () {
-                      WebService().getCatFact();
+                    onPressed: () async {
+                      _anotherFact();
                     },
                     style: ButtonStyle(
                         backgroundColor:
@@ -102,8 +122,8 @@ class _CatMainPageState extends State<CatMainPage> {
                     onPressed: () async {
                       await Hive.openBox<dynamic>(HiveBoxes.fact);
 
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const FactHistory()));
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (_) => const FactHistory()));
                     },
                     style: ButtonStyle(
                         backgroundColor:
